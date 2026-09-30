@@ -3,29 +3,114 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
     <title>Party Up — намери маса за настолна ролева игра</title>
+    <meta
+      name="description"
+      content="Party Up е мястото, където масите за настолни ролеви игри търсят играчи. Разгледай отворените маси и седни на тази, която ти пасва."
+    />
+
+    <!--
+      МЕТА ТАГОВЕТЕ СА ПРИЧИНАТА СТРАНИЦАТА ДА СЪЩЕСТВУВА, не украса: краулерът на
+      LinkedIn не стига до `*.workers.dev` (проверено два пъти през Post Inspector при
+      напълно здрав сървър), затова споделя се ТОЗИ адрес, а той праща човека нататък.
+      URL-ите са АБСОЛЮТНИ — относителен път е безполезен за чужд бот.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Party Up" />
+    <meta property="og:title" content="Party Up — намери маса за настолна ролева игра" />
+    <meta
+      property="og:description"
+      content="Десетки сайтове за запознанства, а нито един за хората около масата. Party Up обръща търсенето: масите канят играчи."
+    />
+    <meta property="og:url" content="https://kalojandg.github.io/party-up-landing/" />
+    <meta property="og:image" content="https://kalojandg.github.io/party-up-landing/assets/og.png" />
+    <!-- 1200×630 е условието LinkedIn да нарисува голяма картичка вместо гол линк. -->
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Логото на Party Up върху името на приложението" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Party Up — намери маса за настолна ролева игра" />
+    <meta
+      name="twitter:description"
+      content="Десетки сайтове за запознанства, а нито един за хората около масата. Party Up обръща търсенето: масите канят играчи."
+    />
+    <meta name="twitter:image" content="https://kalojandg.github.io/party-up-landing/assets/og.png" />
+
     <link rel="icon" href="assets/favicon.png" />
     <link rel="stylesheet" href="src/styles.css" />
+    <!-- type="module" значи отложено по подразбиране — няма нужда от defer. -->
+    <script type="module" src="src/i18n.js"></script>
   </head>
   <body>
     <!--
-      СКЕЛЕТ (не е готовата страница). Тук стои минималното, което прави визитката
-      полезна още от първия деплой: лого, едно изречение и вратата към приложението.
-      Съдържанието, двата езика и мета таговете идват с тасковете на борда — виж
-      `partyup-landing-structure.md` за това кой файл чия зона е.
+      Текстът тук е БЪЛГАРСКИЯТ — той е езикът по подразбиране, така страницата е
+      четима и ако скриптът не се зареди. Всеки преводим текстов възел носи
+      `data-i18n="<ключ>"`, а преводим атрибут — `data-i18n-aria="<ключ>"`;
+      самите текстове живеят в `src/content.*.json`.
     -->
+    <header class="topbar">
+      <!-- Бутонът показва КЪМ КОЙ език води, не текущия. -->
+      <button
+        class="lang-toggle"
+        type="button"
+        data-testid="lang-toggle"
+        data-i18n-aria="lang.toggle"
+        aria-label="Switch to English"
+      >
+        <span data-i18n="lang.short">EN</span>
+      </button>
+    </header>
+
     <main class="page">
-      <img class="logo" src="assets/logo.png" alt="Party Up" width="160" height="160" />
+      <section class="hero">
+        <img class="logo" src="assets/logo.png" alt="Party Up" width="160" height="160" />
 
-      <h1 data-i18n="hero.title">Party Up</h1>
+        <h1 data-i18n="hero.title">Party Up</h1>
 
-      <p data-i18n="hero.tagline">
-        Намери маса за настолна ролева игра — масите дърпат играчите, не обратното.
-      </p>
+        <p data-i18n="hero.tagline">
+          Намери маса за настолна ролева игра — масите дърпат играчите, не обратното.
+        </p>
+      </section>
+
+      <section class="pitch">
+        <p data-i18n="pitch.question">
+          Десетки сайтове ти помагат да намериш половинка. Защо няма такъв за хората около
+          масата?
+        </p>
+
+        <!-- Шегата умира в превод — този ред остава на английски и в българската версия. -->
+        <p class="punchline" data-i18n="pitch.punchline">
+          Find your soulmate? Why not find your tabletop mates?
+        </p>
+
+        <p data-i18n="pitch.body">
+          Party Up е обява за маса, не обява за играч. Водещият описва какво се играе, кога и
+          с кого, а играчите избират маса, вместо да чакат някой да ги намери. За всеки, който
+          има кампания без хора или свободна вечер без кампания.
+        </p>
+      </section>
+
+      <section class="spread">
+        <h2 data-i18n="spread.title">Помогни да се разчуе</h2>
+
+        <p data-i18n="spread.body">
+          Такива мрежи работят с хора, не с реклама. Ако познаваш някого, който търси маса или
+          играчи — кажи му. Сподели връзката в групата си, покажи я на водещия, с когото играеш.
+        </p>
+      </section>
 
       <a class="cta" data-testid="app-link" href="https://party-up.kaloiand.workers.dev/">
         <span data-i18n="cta.open">Отвори приложението</span>
       </a>
     </main>
+
+    <footer class="footer">
+      <p data-i18n="footer.madeWith">
+        Party Up — страничен проект за хората около масата. Приложението живее на
+        party-up.kaloiand.workers.dev
+      </p>
+    </footer>
   </body>
 </html>
