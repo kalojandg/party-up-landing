@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **partyup** (14 symbols, 12 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **party-up-landing** (182 symbols, 250 relationships, 3 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -24,10 +24,10 @@ This project is indexed by GitNexus as **partyup** (14 symbols, 12 relationships
 
 | Resource | Use for |
 |----------|---------|
-| `gitnexus://repo/partyup/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/partyup/clusters` | All functional areas |
-| `gitnexus://repo/partyup/processes` | All execution flows |
-| `gitnexus://repo/partyup/process/{name}` | Step-by-step execution trace |
+| `gitnexus://repo/party-up-landing/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/party-up-landing/clusters` | All functional areas |
+| `gitnexus://repo/party-up-landing/processes` | All execution flows |
+| `gitnexus://repo/party-up-landing/process/{name}` | Step-by-step execution trace |
 
 ## CLI
 
