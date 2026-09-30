@@ -1,0 +1,14 @@
+{
+  "name": "partyup-landing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Party Up landing page — визитката, която се споделя в LinkedIn и CV.",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.js\"",
+    "serve": "node scripts/serve.js"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}

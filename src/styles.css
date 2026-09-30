@@ -1,0 +1,73 @@
+/*
+ * ЗОНА НА СТИЛОВЕТЕ. Тук е минималното, за да не изглежда скелетът счупен при
+ * първия деплой — оформлението идва с таска за визуалния стил. Нула зависимости,
+ * нула build стъпка: файлът се сервира както е.
+ */
+
+:root {
+  color-scheme: light dark;
+  --ink: #1b1b22;
+  --ink-muted: #55555f;
+  --surface: #fbfaf7;
+  --accent: #6b3fa0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f2f1ee;
+    --ink-muted: #b4b2ad;
+    --surface: #17161b;
+    --accent: #b191e0;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
+  background: var(--surface);
+  color: var(--ink);
+  font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.page {
+  margin: 0 auto;
+  max-width: 44rem;
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.logo {
+  width: 160px;
+  height: auto;
+  max-width: 100%;
+}
+
+h1 {
+  margin: 1.5rem 0 0.5rem;
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+p {
+  margin: 0 auto 2rem;
+  max-width: 34rem;
+  color: var(--ink-muted);
+}
+
+.cta {
+  display: inline-block;
+  padding: 0.9rem 1.8rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cta:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
