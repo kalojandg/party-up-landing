@@ -17,7 +17,7 @@ export function loadPage({ scripts = false } = {}) {
   const html = readFileSync(fileURLToPath(new URL('index.html', ROOT)), 'utf8');
 
   const dom = new JSDOM(html, {
-    url: 'https://kalojandg.github.io/partyup/',
+    url: 'https://kalojandg.github.io/party-up-landing/',
     runScripts: scripts ? 'dangerously' : undefined,
     resources: scripts ? 'usable' : undefined,
   });
