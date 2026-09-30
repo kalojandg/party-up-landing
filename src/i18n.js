@@ -160,18 +160,38 @@ export function setupLanguageSwitch({
   warn = warnOnce,
 } = {}) {
   let current = pickInitialLang({ storage, language });
+  // `current` е ПРИЛОЖЕНИЯТ език, `requested` — последно поисканият. Двете се
+  // разминават само докато речникът пътува, и точно там беше дефектът: бутонът
+  // четеше `current`, тоест два бързи клика смятаха една и съща посока и вторият
+  // беше no-op вместо връщане назад. На локален JSON прозорецът е милисекунди,
+  // на телефон в мобилна мрежа — не.
+  let requested = current;
+  // Коя заявка е последна. Два клика значи два речника в движение; те могат да се
+  // върнат разменени, а тогава изпреварената презаписва по-новата.
+  let latest = 0;
 
   async function apply(lang, { remember }) {
+    const ticket = ++latest;
+
+    requested = lang;
+
     let dictionary;
 
     try {
       dictionary = await load(lang);
     } catch (error) {
-      // Речникът не се зареди → страницата остава на каквото има (българския HTML).
+      // Речникът не се зареди → страницата остава на каквото има (българския HTML),
+      // тоест поисканото се връща на ПРИЛОЖЕНОТО — иначе бутонът сочи език, до който
+      // никога не сме стигнали. Само ако не сме изпреварени: по-новият клик решава.
+      if (ticket === latest) requested = current;
+
       warn(`[i18n] речникът за "${lang}" не се зареди: ${error?.message ?? error}`);
 
       return;
     }
+
+    // Изпреварен от по-нов клик → мълчи. Иначе бавният отговор връща стария език.
+    if (ticket !== latest) return;
 
     current = lang;
     // Без това екранните четци и търсачките четат грешен език — половината смисъл
@@ -194,7 +214,7 @@ export function setupLanguageSwitch({
   const toggle = doc.querySelector('[data-testid="lang-toggle"]');
 
   if (toggle) {
-    toggle.addEventListener('click', () => void switchTo(otherLang(current)));
+    toggle.addEventListener('click', () => void switchTo(otherLang(requested)));
   }
 
   return {

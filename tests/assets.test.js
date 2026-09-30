@@ -1,10 +1,19 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { loadPage, readFile } from './dom.js';
+import { loadPage, readBytes, readFile } from './dom.js';
 
 /**
- * Спекът на ЧЕРВЕНА ЛИНИЯ #4 — „нула проследяване, нула външни скриптове".
+ * Спекът на активите — заключва ДВЕ червени линии наведнъж.
+ *
+ * ЧЕРВЕНА ЛИНИЯ #2 — „`assets/og.png` не се преоразмерява и не се пре-кодира".
+ * Мета таговете ОБЯВЯВАТ 1200×630 и `markup.test.js` пази обявеното, но нищо досега
+ * не пазеше самия файл: пре-кодира ли някой картинката на 1000×525, целият suite
+ * остава зелен, таговете продължават да лъжат, а LinkedIn рисува гол линк — точно
+ * провалът, заради който страницата съществува. Размерите на PNG стоят в IHDR
+ * чънка (байтове 16–23), тоест проверката е без зависимост.
+ *
+ * ЧЕРВЕНА ЛИНИЯ #4 — „нула проследяване, нула външни скриптове".
  *
  * Днес правилото е спазено, но само по навик: нищо не пада, ако утре някой добави
  * един ред `@import url(fonts.googleapis…)` или analytics таг. Страницата е визитка,
@@ -19,10 +28,32 @@ import { loadPage, readFile } from './dom.js';
 const SOURCES = ['index.html', 'src/styles.css', 'src/i18n.js'];
 
 /**
+ * Размерът, който платформите за споделяне искат, и размерът, с който логото идва
+ * от приложението. И двете са в референцията; и двете днес са верни на диска.
+ */
+const IMAGE_SIZES = {
+  'assets/og.png': [1200, 630],
+  'assets/logo.png': [604, 604],
+};
+
+/** Ширина и височина от IHDR чънка — първото нещо след 8-байтовия PNG подпис. */
+function pngSize(bytes) {
+  assert.equal(
+    bytes.subarray(1, 4).toString('latin1'),
+    'PNG',
+    'файлът не е PNG — пре-кодиран ли е в друг формат?',
+  );
+
+  return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+}
+
+/**
  * Единствените два адреса, които имаме право да произнасяме: собствената страница
  * (og таговете я искат АБСОЛЮТНА) и приложението, към което водим.
  */
 const ALLOWED_HOSTS = ['kalojandg.github.io', 'party-up.kaloiand.workers.dev'];
+
+const PAGE_URL = 'https://kalojandg.github.io/party-up-landing/';
 
 /** Всеки абсолютен адрес в текста, чийто хост не е наш. */
 function externalUrls(source) {
@@ -62,5 +93,33 @@ test('разметката линква собствените си стилов
 
   for (const path of referenced) {
     assert.doesNotMatch(path, /^(https?:)?\/\//, `външен ресурс в разметката: ${path}`);
+  }
+});
+
+test('картинката за споделяне е точно 1200×630 НА ДИСКА, не само в мета таговете', () => {
+  for (const [path, [width, height]] of Object.entries(IMAGE_SIZES)) {
+    assert.deepEqual(pngSize(readBytes(path)), [width, height], `${path}: сменен размер`);
+  }
+});
+
+test('всеки ресурс, който разметката иска, наистина съществува в репото', () => {
+  const document = loadPage();
+
+  // og:image е АБСОЛЮТЕН по договор (краулерът не разбира относителен път), затова
+  // се сваля до път в репото — печатна грешка в него е гол линк в LinkedIn.
+  const ogImage = document.querySelector('meta[property="og:image"]')?.getAttribute('content');
+  assert.ok(ogImage?.startsWith(PAGE_URL), `og:image не сочи страницата: ${ogImage}`);
+
+  const referenced = [
+    ogImage.slice(PAGE_URL.length),
+    ...[
+      ...document.querySelectorAll('link[href]'),
+      ...document.querySelectorAll('script[src]'),
+      ...document.querySelectorAll('img[src]'),
+    ].map((element) => element.getAttribute('href') ?? element.getAttribute('src')),
+  ];
+
+  for (const path of referenced) {
+    assert.doesNotThrow(() => readBytes(path), `разметката сочи липсващ файл: ${path}`);
   }
 });

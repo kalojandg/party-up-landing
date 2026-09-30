@@ -174,7 +174,57 @@ test('(д) изборът се запомня и се чете при следв
   );
 });
 
-test('(е) localStorage, който хвърля, НЕ чупи прилагането на текстовете', async () => {
+/**
+ * Зареждане, което виси, докато тестът не го пусне — така „бавната мрежа" е
+ * детерминистична, вместо да се гони със `setTimeout`.
+ */
+function controllableLoad() {
+  const waiting = [];
+  const load = (lang) => new Promise((resolve) => waiting.push(() => resolve(DICTIONARIES[lang])));
+
+  load.releaseAll = async () => {
+    while (waiting.length > 0) waiting.shift()();
+    // Две микрозадачи: една за `await load(...)`, една за продължението след него.
+    await Promise.resolve();
+    await Promise.resolve();
+  };
+
+  return load;
+}
+
+test('(е) бърз двоен клик връща предишния език, вместо да е no-op', async () => {
+  const document = makeDocument();
+  const slow = controllableLoad();
+  const i18n = setupLanguageSwitch({
+    doc: document,
+    storage: memoryStorage(),
+    load: slow,
+    warn: recordingWarn(),
+  });
+
+  await slow.releaseAll();
+  await i18n.ready;
+  assert.equal(i18n.lang, 'bg');
+
+  const toggle = document.querySelector('[data-testid="lang-toggle"]');
+
+  // Двата клика падат в прозореца на зареждането — вторият трябва да е „обратно към bg",
+  // а не пореден „към en", защото посоката се смята от ПОИСКАНИЯ, не от приложения език.
+  toggle.click();
+  toggle.click();
+
+  await slow.releaseAll();
+  await i18n.pending;
+
+  assert.equal(i18n.lang, 'bg', 'вторият клик трябва да върне българския');
+  assert.equal(document.documentElement.lang, 'bg');
+  assert.equal(
+    document.querySelector('[data-i18n="hero.tagline"]').textContent,
+    DICTIONARIES.bg['hero.tagline'],
+  );
+});
+
+test('(ж) localStorage, който хвърля, НЕ чупи прилагането на текстовете', async () => {
   const document = makeDocument();
 
   assert.doesNotThrow(() => pickInitialLang({ storage: hostileStorage, language: 'en-GB' }));

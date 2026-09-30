@@ -54,8 +54,15 @@ img {
   height: auto;
 }
 
+/*
+ * Закачаме се за КЛАСОВЕТЕ от разметката, не за `data-testid`: онзи атрибут е
+ * договор с тестовете, а не с дизайна. Стилизира ли се през него, преименуване
+ * в спека смъква рамката и 44×44 tap target-а на бутона, а всички тестове
+ * остават зелени — точно защото търсят същия hook.
+ */
+
 /* Хедър: лента с бутона за смяна на език. */
-header {
+.topbar {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -63,7 +70,7 @@ header {
   padding-bottom: var(--space-2xs);
 }
 
-[data-testid="lang-toggle"] {
+.lang-toggle {
   min-width: 44px;
   min-height: 44px;
   padding: 0.5rem 0.9rem;
@@ -79,7 +86,7 @@ header {
   cursor: pointer;
 }
 
-[data-testid="lang-toggle"]:focus-visible {
+.lang-toggle:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
@@ -173,7 +180,7 @@ section.spread p {
 
 @media (prefers-reduced-motion: no-preference) {
   .cta,
-  [data-testid="lang-toggle"] {
+  .lang-toggle {
     transition: opacity 0.15s ease, transform 0.15s ease;
   }
 
@@ -182,7 +189,7 @@ section.spread p {
   }
 }
 
-footer {
+.footer {
   padding-block: var(--space-s);
   padding-bottom: max(var(--space-s), calc(var(--space-s) + env(safe-area-inset-bottom, 0px)));
   color: var(--ink-muted);
