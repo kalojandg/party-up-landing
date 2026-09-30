@@ -86,6 +86,16 @@ test('връзката към приложението сочи живия ад�
   assert.equal(appLink.getAttribute('href'), APP_URL);
 });
 
+test('punchline обявява собствения си език', () => {
+  const document = loadPage();
+  const punchline = document.querySelector('[data-i18n="pitch.punchline"]');
+
+  assert.ok(punchline, 'липсва punchline абзацът');
+  // Редът нарочно остава на английски и в българската версия — без този атрибут
+  // екранният четец го чете с фонетиката на документа, тоест с българска.
+  assert.equal(punchline.getAttribute('lang'), 'en');
+});
+
 test('логото носи alt и запазени размери, за да не скача оформлението', () => {
   const document = loadPage();
   const logo = document.querySelector('img[src="assets/logo.png"]');
